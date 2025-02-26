@@ -1,0 +1,1071 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "RideTech API",
+        "description": "Документация API для Инноватсияи ояндасоз",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8088/api",
+            "description": "API сервер"
+        }
+    ],
+    "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Регистрация пользователя",
+                "description": "Создаёт нового пользователя и выдаёт токен доступа.",
+                "operationId": "0903f2e0df1a8857bee538fc055417f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Пользователь успешно зарегистрирован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignInResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Аутентификация пользователя",
+                "description": "Авторизует пользователя и выдаёт токен доступа.",
+                "operationId": "2dd578ff7aba2721293dac66833b27d1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SignInResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неверный email или пароль"
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Выход пользователя",
+                "description": "Удаляет текущий токен пользователя.",
+                "operationId": "68a6108af04af5e3bc1ea68a6c6f1299",
+                "responses": {
+                    "200": {
+                        "description": "Пользователь успешно разлогинен",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Вы успешно разлогинились"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cars": {
+            "get": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Получить список автомобилей пользователя",
+                "description": "Возвращает список автомобилей текущего пользователя.",
+                "operationId": "d8232bc6a16fec784f4a5fca541f9856",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Количество элементов на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список автомобилей",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Car"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Создать новый автомобиль",
+                "description": "Создаёт новый автомобиль и возвращает его данные.",
+                "operationId": "724566c843f5b743f804f2be0147edde",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateCarRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Автомобиль успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Car"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/cars/{car}": {
+            "put": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Обновить данные автомобиля",
+                "description": "Обновляет информацию о выбранном автомобиле.",
+                "operationId": "833639000256eedaa129e98c1eaada8c",
+                "parameters": [
+                    {
+                        "name": "car",
+                        "in": "path",
+                        "description": "ID автомобиля для обновления",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateCarRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Данные автомобиля обновлены",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Car"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "404": {
+                        "description": "Автомобиль не найден"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cars"
+                ],
+                "summary": "Удалить автомобиль",
+                "description": "Удаляет автомобиль по ID.",
+                "operationId": "994ff3a21b92ebf0efc3567c2bc347e3",
+                "parameters": [
+                    {
+                        "name": "car",
+                        "in": "path",
+                        "description": "ID автомобиля для удаления",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Автомобиль удалён"
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "404": {
+                        "description": "Автомобиль не найден"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reviews/{driver_id}": {
+            "get": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Получить список отзывов о водителе",
+                "description": "Возвращает все отзывы о водителе.",
+                "operationId": "34f483e778fdeccc9c342bf8c2d96eac",
+                "parameters": [
+                    {
+                        "name": "driver",
+                        "in": "path",
+                        "description": "ID водителя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список отзывов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Review"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Reviews"
+                ],
+                "summary": "Создать отзыв о водителе",
+                "description": "Создаёт новый отзыв для водителя.",
+                "operationId": "06522b96056c6c8047799fd8ac678b70",
+                "parameters": [
+                    {
+                        "name": "driver",
+                        "in": "path",
+                        "description": "ID водителя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Отзыв успешно создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Review"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Получить список поездок пользователя",
+                "description": "Возвращает список поездок текущего пользователя с фильтрацией по водителю, пассажиру, статусу и дате.",
+                "operationId": "10ba3ec4a1798366bf9e858297b8c635",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Количество элементов на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "driver_id",
+                        "in": "query",
+                        "description": "Фильтр по ID водителя (только для пассажиров)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "passenger_id",
+                        "in": "query",
+                        "description": "Фильтр по ID пассажира (только для водителей)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу поездки",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "Фильтр по дате создания поездки (YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список поездок",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "current_page": {
+                                            "type": "integer"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Trip"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "per_page": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Создать новую поездку",
+                "description": "Создаёт новую поездку и возвращает её данные.",
+                "operationId": "47dcf5ea0d5a1f23a28fb51e34ad081f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreateTripRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Поездка успешно создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Trip"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/trips/{id}": {
+            "get": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Получить информацию о поездке",
+                "description": "Возвращает данные конкретной поездки.",
+                "operationId": "7c45de8eac6e2b969d441855f39eb437",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные поездки",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Trip"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Обновить информацию о поездке",
+                "description": "Обновляет информацию о поездке, включая статус.",
+                "operationId": "6135e941d2681d021e4e80660477ea37",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateTripRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Поездка успешно обновлена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Trip"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    },
+                    "422": {
+                        "description": "Ошибка валидации"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Trips"
+                ],
+                "summary": "Удалить поездку",
+                "description": "Удаляет поездку из системы.",
+                "operationId": "1fca55452b03229a8d0ae823b0fa5479",
+                "parameters": [
+                    {
+                        "name": "trip",
+                        "in": "path",
+                        "description": "ID поездки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Поездка успешно удалена",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Trip canceled"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Неавторизованный доступ"
+                    },
+                    "403": {
+                        "description": "Доступ запрещён"
+                    },
+                    "404": {
+                        "description": "Поездка не найдена"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CreateCarRequest": {
+                "required": [
+                    "model",
+                    "brand",
+                    "license_plate"
+                ],
+                "properties": {
+                    "model": {
+                        "description": "Модель автомобиля",
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "brand": {
+                        "description": "Бренд автомобиля",
+                        "type": "string",
+                        "maxLength": 100
+                    },
+                    "license_plate": {
+                        "description": "Номерной знак автомобиля",
+                        "type": "string",
+                        "maxLength": 20
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateCarRequest": {
+                "required": [
+                    "license_plate"
+                ],
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/CreateCarRequest"
+                    },
+                    {
+                        "properties": {
+                            "license_plate": {
+                                "description": "Номерной знак автомобиля",
+                                "type": "string",
+                                "maxLength": 20
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "CreateReviewRequest": {
+                "required": [
+                    "trip_id",
+                    "rating"
+                ],
+                "properties": {
+                    "trip_id": {
+                        "description": "ID поездки, к которой относится отзыв",
+                        "type": "integer"
+                    },
+                    "rating": {
+                        "description": "Оценка от 1 до 5",
+                        "type": "integer",
+                        "maximum": 5,
+                        "minimum": 1
+                    },
+                    "comment": {
+                        "description": "Комментарий к отзыву",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "CreateTripRequest": {
+                "title": "Запрос на создание поездки",
+                "description": "Данные, необходимые для создания поездки",
+                "required": [
+                    "pickup_address",
+                    "destination_address"
+                ],
+                "properties": {
+                    "pickup_address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "123 Main St, New York, NY"
+                    },
+                    "destination_address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "456 Elm St, Los Angeles, CA"
+                    },
+                    "preferences": {
+                        "type": "string",
+                        "example": "No smoking, quiet ride",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateTripRequest": {
+                "required": [
+                    "status"
+                ],
+                "type": "object",
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/CreateTripRequest"
+                    },
+                    {
+                        "properties": {
+                            "status": {
+                                "description": "Статус поездки",
+                                "type": "string",
+                                "enum": [
+                                    "pending",
+                                    "accepted",
+                                    "in_progress",
+                                    "completed",
+                                    "cancelled"
+                                ]
+                            }
+                        },
+                        "type": "object"
+                    }
+                ]
+            },
+            "LoginRequest": {
+                "title": "Запрос на вход",
+                "description": "Данные для входа в систему",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ivan@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterRequest": {
+                "title": "Запрос на регистрацию",
+                "description": "Данные для регистрации нового пользователя",
+                "required": [
+                    "name",
+                    "email",
+                    "phone",
+                    "password",
+                    "role"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Иван Иванов"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "ivan@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "maxLength": 20,
+                        "example": "+79876543210"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "minLength": 6,
+                        "example": "password123"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "driver",
+                            "passenger"
+                        ],
+                        "example": "driver"
+                    }
+                },
+                "type": "object"
+            },
+            "Car": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "driver_id": {
+                        "type": "integer"
+                    },
+                    "model": {
+                        "type": "string"
+                    },
+                    "brand": {
+                        "type": "string"
+                    },
+                    "license_plate": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "Review": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "trip_id": {
+                        "type": "integer"
+                    },
+                    "driver_id": {
+                        "type": "integer"
+                    },
+                    "rating": {
+                        "type": "integer"
+                    },
+                    "comment": {
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SignInResource": {
+                "title": "Ответ при успешной аутентификации",
+                "description": "Данные о пользователе и токене доступа",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Иван Иванов"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ivan@example.com"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+79876543210"
+                    },
+                    "role": {
+                        "type": "string",
+                        "enum": [
+                            "driver",
+                            "passenger"
+                        ],
+                        "example": "driver"
+                    },
+                    "token": {
+                        "type": "string",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                },
+                "type": "object"
+            },
+            "Trip": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "driver_id": {
+                        "type": "integer"
+                    },
+                    "passenger_id": {
+                        "type": "integer"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Cars",
+            "description": "Операции с автомобилями"
+        },
+        {
+            "name": "Reviews",
+            "description": "Операции с отзывами"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Trips",
+            "description": "Trips"
+        }
+    ],
+    "security": [
+        {
+            "BearerAuth": []
+        }
+    ]
+}
